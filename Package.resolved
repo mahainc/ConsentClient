@@ -1,5 +1,5 @@
 {
-  "originHash" : "c798f0d6047a561ac2a72fa2fc3ce4b34086bdf2d2a30ddb94fa7582d8764810",
+  "originHash" : "ca972e400dc1a8943ce8a46e336f1e26cd20d2bfadc4330f22207c1c1647b5da",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -20,12 +20,12 @@
       }
     },
     {
-      "identity" : "analyticclient",
+      "identity" : "analyticsclient",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mahainc/AnalyticClient.git",
+      "location" : "https://github.com/mahainc/AnalyticsClient.git",
       "state" : {
-        "revision" : "591772e3b39053709b24d58c20ad6bc67bc73540",
-        "version" : "1.2.0"
+        "revision" : "b95047404d6e214192dded1ec84d6cce685a6135",
+        "version" : "2.0.0"
       }
     },
     {
@@ -348,8 +348,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mahainc/UMPClient.git",
       "state" : {
-        "revision" : "bcfdb3c30344421e823a0b2891d3adc08b6ed53d",
-        "version" : "1.0.1"
+        "revision" : "13dd38d8f0ee590f9fa6e6e897a40caaf7505627",
+        "version" : "2.0.0"
       }
     },
     {

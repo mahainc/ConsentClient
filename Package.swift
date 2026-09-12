@@ -31,7 +31,12 @@ let package = Package(
                 "ConsentClient",
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "ATTClient", package: "ATTClient"),
+                // The Live targets carry the `liveValue` for each client. Linking only the
+                // interfaces compiles and then resolves every `@Dependency` to the
+                // unimplemented test value at runtime, which silently answers "no consent".
+                .product(name: "ATTClientLive", package: "ATTClient"),
                 .product(name: "UMPClient", package: "UMPClient"),
+                .product(name: "UMPClientLive", package: "UMPClient"),
                 .product(name: "LogClient", package: "LogClient"),
                 .product(name: "FunnelClient", package: "FunnelClient"),
             ]
