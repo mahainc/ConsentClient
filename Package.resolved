@@ -1,5 +1,5 @@
 {
-  "originHash" : "ca972e400dc1a8943ce8a46e336f1e26cd20d2bfadc4330f22207c1c1647b5da",
+  "originHash" : "e2bd66c2950127fb82ff80c572f63b0e7699bd30378177645fecf948fbbaa19d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -35,15 +35,6 @@
       "state" : {
         "revision" : "3e33dd27dd4c69bd81c7c81fe61d8ccf58846902",
         "version" : "11.3.1"
-      }
-    },
-    {
-      "identity" : "attclient",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mahainc/ATTClient.git",
-      "state" : {
-        "revision" : "ddc6e8f155b3396009a873f8a5f35daf5b3d451a",
-        "version" : "1.0.0"
       }
     },
     {
@@ -341,15 +332,6 @@
       "state" : {
         "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
         "version" : "603.0.2"
-      }
-    },
-    {
-      "identity" : "umpclient",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mahainc/UMPClient.git",
-      "state" : {
-        "revision" : "13dd38d8f0ee590f9fa6e6e897a40caaf7505627",
-        "version" : "2.0.0"
       }
     },
     {

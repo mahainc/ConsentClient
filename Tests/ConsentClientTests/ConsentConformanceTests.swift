@@ -1,18 +1,16 @@
-import ATTClient
+import ConsentClient
 import ConsentClientLive
-import Dependencies
 import FunnelClient
 import Testing
-import UMPClient
 
-@Suite("ConsentFunnelProvider")
-struct ConsentFunnelProviderTests {
+@Suite("ConsentClient funnel conformance")
+struct ConsentConformanceTests {
 
     @Test("resolves ATT before UMP")
     func trackingPromptPrecedesAdsConsent() async {
         let stubs = ConsentStubs()
 
-        _ = await resolveOutcome(stubs)
+        _ = await stubs.client.requestConsentIfNeeded()
 
         let steps = await stubs.recorder.steps
         #expect(steps == [.tracking, .ads])
@@ -24,20 +22,20 @@ struct ConsentFunnelProviderTests {
         stubs.umpError = .unreachable
         stubs.canRequestAds = true
 
-        let outcome = await resolveOutcome(stubs)
+        let outcome = await stubs.client.requestConsentIfNeeded()
 
         #expect(outcome.canRequestAds)
     }
 
     @Test(
         "never reports .unavailable — ATT always yields a real answer",
-        arguments: ATTClient.AuthorizationStatus.allCases
+        arguments: ConsentClient.TrackingAuthorization.allCases
     )
-    func neverReportsUnavailable(status: ATTClient.AuthorizationStatus) async {
+    func neverReportsUnavailable(status: ConsentClient.TrackingAuthorization) async {
         var stubs = ConsentStubs()
         stubs.tracking = status
 
-        let outcome = await resolveOutcome(stubs)
+        let outcome = await stubs.client.requestConsentIfNeeded()
 
         if case .unavailable = outcome.trackingAuthorization {
             Issue.record("ATT status \(status) collapsed to .unavailable")
@@ -64,44 +62,31 @@ private actor StepRecorder {
     }
 }
 
+/// One stub for the whole flow, where the previous shape needed two clients stitched
+/// together through `withDependencies` — the merge shows up here as well.
 private struct ConsentStubs: Sendable {
-    var tracking: ATTClient.AuthorizationStatus = .authorized
+    var tracking: ConsentClient.TrackingAuthorization = .authorized
     var umpError: StubError?
     var canRequestAds = true
     var recorder = StepRecorder()
 
-    var attClient: ATTClient {
-        ATTClient(
-            authorizationStatus: { tracking },
-            requestAuthorization: {
+    var client: ConsentClient {
+        ConsentClient(
+            trackingAuthorization: { tracking },
+            requestTrackingAuthorization: {
                 await recorder.record(.tracking)
                 return tracking
-            }
-        )
-    }
-
-    var umpClient: UMPClient {
-        UMPClient(
-            requestConsentIfNeeded: { _ in
+            },
+            requestAdsConsent: { _ in
                 await recorder.record(.ads)
                 if let umpError {
                     throw umpError
                 }
                 return .obtained
             },
-            consentStatus: { .obtained },
             canRequestAds: { canRequestAds },
-            reset: {}
+            resetAdsConsent: {},
+            configuration: { ConsentClient.Config() }
         )
-    }
-}
-
-/// Runs the provider against `stubs`, recording the order the two halves ran in.
-private func resolveOutcome(_ stubs: ConsentStubs) async -> FunnelClient.Consent.Outcome {
-    await withDependencies {
-        $0.attClient = stubs.attClient
-        $0.umpClient = stubs.umpClient
-    } operation: {
-        await ConsentFunnelProvider().requestConsentIfNeeded()
     }
 }
