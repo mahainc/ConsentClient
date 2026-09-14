@@ -1,8 +1,8 @@
 import AnalyticsClient
 import ConsentClient
 import Dependencies
-@preconcurrency import UserMessagingPlatform
 import UIKit
+@preconcurrency import UserMessagingPlatform
 
 /// Google's half of consent: the information update, and the form when one is required.
 enum UMPFlow {
@@ -57,10 +57,6 @@ enum UMPFlow {
         ConsentInformation.shared.canRequestAds
     }
 
-    static func consentStatus() -> ConsentClient.ConsentStatus {
-        mapStatus(ConsentInformation.shared.consentStatus)
-    }
-
     static func reset() {
         ConsentInformation.shared.reset()
     }
@@ -81,19 +77,14 @@ enum UMPFlow {
         to parameters: RequestParameters
     ) {
         if config.forceConsentFormForQA {
-            let debugSettings = DebugSettings()
-            debugSettings.geography = .EEA
-            parameters.debugSettings = debugSettings
+            parameters.debugSettings = eeaDebugSettings(testDeviceIdentifiers: [])
             #if DEBUG
             print(
                 "🔍 [UMP] forceConsentFormForQA=true; forcing geography=.EEA for ALL devices. Revert before shipping."
             )
             #endif
         } else if !config.testDeviceIdentifiers.isEmpty {
-            let debugSettings = DebugSettings()
-            debugSettings.geography = .EEA
-            debugSettings.testDeviceIdentifiers = config.testDeviceIdentifiers
-            parameters.debugSettings = debugSettings
+            parameters.debugSettings = eeaDebugSettings(testDeviceIdentifiers: config.testDeviceIdentifiers)
             #if DEBUG
             print(
                 "🔍 [UMP] Test-device override active (\(config.testDeviceIdentifiers.count) devices); forcing geography=.EEA."
@@ -101,14 +92,21 @@ enum UMPFlow {
             #endif
         } else {
             #if DEBUG
-            let debugSettings = DebugSettings()
-            debugSettings.geography = .EEA
-            parameters.debugSettings = debugSettings
+            parameters.debugSettings = eeaDebugSettings(testDeviceIdentifiers: [])
             print(
                 "🔍 [UMP] DEBUG build: forcing geography=.EEA. Simulators are test devices by default; pass ConsentClient.Config(testDeviceIdentifiers: […]) for physical devices."
             )
             #endif
         }
+    }
+
+    /// Debug settings that make UMP treat the request as coming from the EEA — for every
+    /// device when `testDeviceIdentifiers` is empty, otherwise only for the listed ones.
+    private static func eeaDebugSettings(testDeviceIdentifiers: [String]) -> DebugSettings {
+        let debugSettings = DebugSettings()
+        debugSettings.geography = .EEA
+        debugSettings.testDeviceIdentifiers = testDeviceIdentifiers
+        return debugSettings
     }
 
     /// Uses the raw ObjC name to avoid the `ConsentStatus` name collision.
@@ -147,9 +145,9 @@ enum UMPFlow {
 
     @MainActor
     private static func presentForm(_ form: ConsentForm) async throws {
-        let rootVC = try rootViewController()
+        let presenter = try topViewController()
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            form.present(from: rootVC) { error in
+            form.present(from: presenter) { error in
                 if let error {
                     continuation.resume(throwing: error)
                 } else {
@@ -159,19 +157,26 @@ enum UMPFlow {
         }
     }
 
+    /// The controller the form presents from: the top of the modal stack, because a
+    /// controller that is already presenting refuses to present again and the form
+    /// would never appear. Prefers the foreground scene's key window, falling back to
+    /// its frontmost normal-level window while launch has not made one key yet.
     @MainActor
-    private static func rootViewController() throws -> UIViewController {
-        guard
-            let scene = UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene,
-            let window = scene.windows.first(where: { $0.isKeyWindow }),
-            let rootVC = window.rootViewController
-        else {
+    private static func topViewController() throws -> UIViewController {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let scene = scenes.first { $0.activationState == .foregroundActive } ?? scenes.first
+        let keyWindow = scene?.windows.first { $0.isKeyWindow && $0.rootViewController != nil }
+        let window = keyWindow ?? scene?.windows.last { $0.windowLevel == .normal && $0.rootViewController != nil }
+        guard var top = window?.rootViewController else {
             throw NSError(
                 domain: "ConsentClient",
                 code: -2,
                 userInfo: [NSLocalizedDescriptionKey: "No root view controller found"]
             )
         }
-        return rootVC
+        while let presented = top.presentedViewController {
+            top = presented
+        }
+        return top
     }
 }

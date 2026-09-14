@@ -1,5 +1,5 @@
 {
-  "originHash" : "e2bd66c2950127fb82ff80c572f63b0e7699bd30378177645fecf948fbbaa19d",
+  "originHash" : "c07785f7a5a32b0cc95bea5e7d092b0850af03b0a89ffeeb2039388a014d5653",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mahainc/AnalyticsClient.git",
       "state" : {
-        "revision" : "b95047404d6e214192dded1ec84d6cce685a6135",
-        "version" : "2.0.0"
+        "revision" : "5708c624a79fcad630f3c3f9c8158120932c68ad",
+        "version" : "3.0.0"
       }
     },
     {
