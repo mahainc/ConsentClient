@@ -20,7 +20,7 @@ let package = Package(
         .package(url: "https://github.com/mahainc/AnalyticsClient.git", exact: "3.0.1"),
         .package(url: "https://github.com/mahainc/LogClient.git", from: "0.3.0"),
         // Pinned exactly, unlike the rest: the port conformance moves in major versions.
-        .package(url: "https://github.com/mahainc/FunnelClient.git", from: "7.0.0"),
+        .package(url: "https://github.com/mahainc/FunnelClient.git", from: "8.0.0"),
     ],
     targets: [
         .target(
