@@ -1,3 +1,8 @@
+// Every test here drives `requestConsentIfNeeded()` — the `FunnelClient.Consent.Providing`
+// method — so the whole suite tests the conformer, and the conformer only exists when the
+// `Funnel` trait is enabled. With the trait off there is no port to test and no FunnelClient
+// to import. See Package.swift.
+#if Funnel
 import ConsentClient
 import ConsentClientLive
 import FunnelClient
@@ -90,3 +95,4 @@ private struct ConsentStubs: Sendable {
         )
     }
 }
+#endif

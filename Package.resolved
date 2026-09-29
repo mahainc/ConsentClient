@@ -1,5 +1,5 @@
 {
-  "originHash" : "00d9e1273e5cc2078f6e6c2ed25ef0d30fdf40dea339b39eb9a2f1666bc8f3bb",
+  "originHash" : "d7fa97e8fc2f2f2849f5e59c83fdc3f28916ebc856b39b23a6d9de0704ef6e8c",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mahainc/AnalyticsClient.git",
       "state" : {
-        "revision" : "5a722d22b60c6aa3a0f2ada91f6478945c77ebdd",
-        "version" : "3.1.0"
+        "revision" : "6e991fef17c892beb7c1869dd44104d056df5be1",
+        "version" : "3.2.0"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mahainc/FunnelClient.git",
       "state" : {
-        "revision" : "68bfb0484a308d77ec5325d3b6d33febf1bea33d",
-        "version" : "9.0.0"
+        "revision" : "5de60b3f38c5cce1fbe218eba2cfffe60ed64553",
+        "version" : "9.2.0"
       }
     },
     {
@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "a66de878e87ef5a3d5d390e0f6d9002aa5541a43",
-        "version" : "1.7.0"
+        "revision" : "98ef3c98609a1e31b7e157b5b619579001a789d6",
+        "version" : "1.7.1"
       }
     },
     {
