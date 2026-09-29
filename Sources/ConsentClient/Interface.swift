@@ -3,7 +3,7 @@ import Foundation
 
 /// The composed ATT + UMP consent flow.
 ///
-/// `FunnelClient.Consent.Providing` needs both halves of consent in one answer — Apple's
+/// `FunnelClient.Mediation.Consent.Providing` needs both halves of consent in one answer — Apple's
 /// tracking authorization and Google's "may I request ads" decision. They used to live in
 /// two separate packages that this one wrapped; both are implemented directly here now, so
 /// there is one place to read when the flow misbehaves instead of three.

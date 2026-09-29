@@ -7,20 +7,20 @@ import Dependencies
 import FunnelClient
 import LogClient
 
-/// Serves `FunnelClient.Consent.Providing` from the client itself, so a host reaches it
+/// Serves `FunnelClient.Mediation.Consent.Providing` from the client itself, so a host reaches it
 /// through the dependency key it already has — `@Dependency(\.consentClient)`.
-extension ConsentClient: FunnelClient.Consent.Providing {
+extension ConsentClient: FunnelClient.Mediation.Consent.Providing {
     /// Resolves both halves of consent, ATT first.
     ///
     /// The order is load-bearing and enforced here rather than left to a caller: Apple's
     /// prompt must be answered before Google's form appears, so UMP's disclosure reflects the
     /// tracking decision the user has just made, and two modal system dialogs cannot share
     /// the screen. The sequential `await`s below — never `async let` — are what guarantee it.
-    public func requestConsentIfNeeded() async -> FunnelClient.Consent.Outcome {
+    public func requestConsentIfNeeded() async -> FunnelClient.Mediation.Consent.Outcome {
         let tracking = await requestTrackingAuthorization()
         let canRequestAds = await resolveAdsConsent()
 
-        return FunnelClient.Consent.Outcome(
+        return FunnelClient.Mediation.Consent.Outcome(
             canRequestAds: canRequestAds,
             trackingAuthorization: Self.trackingAuthorization(from: tracking)
         )
@@ -59,7 +59,7 @@ extension ConsentClient: FunnelClient.Consent.Providing {
     /// into `.notDetermined`.
     private static func trackingAuthorization(
         from status: ConsentClient.TrackingAuthorization
-    ) -> FunnelClient.Consent.TrackingAuthorization {
+    ) -> FunnelClient.Mediation.Consent.TrackingAuthorization {
         switch status {
             case .authorized: return .authorized
             case .denied: return .denied
